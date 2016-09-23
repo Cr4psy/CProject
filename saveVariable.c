@@ -8,7 +8,7 @@
 #define RESET "\x1B[0m"
 
 
-int strToInt(char* num){
+int strToInt(char* num){//Convert a char into a int
 
   int i = 0;
   int val=0;
@@ -24,7 +24,7 @@ int strToInt(char* num){
 int main(int argc, char *argv[])
 {
   int nbOpt=0;
-  int i=0;
+  int i = 0;
   int m = 0;
   nbOpt=argc-1;//Define the number of option (-1 because first option is the name of the prog)
 
