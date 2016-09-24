@@ -12,93 +12,17 @@
 #define RESET "\x1B[0m"
 
 
-int strToInt(char* num){
-
-  int i = 0;
-  int val=0;
-  
-  while (num[i] != '\0') {//Go through all the char
-    val=10*val+(num[i]-48);//Convert code ASCII in int
-    i++;
-   }
-  return val;
-}
 
 
 
-void fileReader(char* fileName, double** matrix)
-{
-  FILE *fp = NULL;
-  int c;
-  int i =0;
-  int j=0;
-  int val =0;
-  int dimMax = 1000;
-  
-   matrix = malloc(sizeof(double*) * dimMax);  
-   for (i = 0; i < dimMax; i++) {
-     matrix[i] = malloc(sizeof(double) * dimMax);   
-   }
-        
-  fp = fopen(fileName, "r");
-  if (fp == NULL) {
-    printf("No file found!\n");
-  }
-  else {
-    printf("File open successfully!\n");
-    i=0;
-    j=0;
-    while ((c = getc(fp)) != EOF) {
-      if (c == 9) {//New column
-        printf("i: %d , j: %d\n", i,j);
-        matrix[i][j] = val;
-        printf("%f\n", matrix[i][j]);
-        j++;
-        val=0;
-      }
-      else if (c == 10) {//New row
-        matrix[i][j] = val;
-        printf("i: %d j: %d\n", i,j);
-         printf("%f\n", matrix[i][j]);
-        i++;
-        j=0;
-        val=0;
-      }
-      else {//Convert ASCII to int
-        val=10*val+(c-48);//Convert code ASCII in int
-      }
-      
-    }//while
-    
-  }//else
 
-  fclose(fp);//Close the file
+int strToInt(char* num);
 
-   for (i = 0; i<dimMax; i++) {
-   free(matrix[i]);
-   }
-   free(matrix);
-  
-return;
-}
+void fileReader(char* fileName, double** matrix, int* nbRow, int* nbCol);
 
+int randomNumberGenerator(int a, int b);
 
-
-int randomNumberGenerator(int a, int b){
-
-  int myRand =a + rand()%((b-a)+1);
-  return myRand;
-}
-
-
-double calculateEuclideanDistance(double* vector1, double* vector2, int N){
-  double val = 0.0;
-  int i = 0;
-  for (i = 0; i < N; i++) {
-    val=val+(pow((vector1[i]-vector2[i]),2));
-  }
-  return sqrt(val);
-}
+double calculateEuclideanDistance(double* vector1, double* vector2, int N);
 
 
 
@@ -108,22 +32,25 @@ int main(int argc, char *argv[])
   srand(time(NULL));
   /*******/
   //For file extraction (temporary)
-  FILE *fp = NULL;
+  /* FILE *fp = NULL;
   int c;
   int val =0;
   int nbRow=150;
   int nbCol=2;
   double matrix[nbRow][nbCol+1];//+1 for p index later
-  int nbIteration=0;
+  
+  */
   /*************/
 
   int i=0;
   int j = 0;
+  int dimMax = 1000;
+  int nbIteration=0;
    
   char* fileName = "data.txt";
 
-  int column = 2;
-  int row = 150;
+  // int column = 2;
+  // int row = 150;
   //  double** matrix;
   //double** mP;
 
@@ -146,43 +73,19 @@ int main(int argc, char *argv[])
 
   /*******************************************************/
   //Etract the data set from txt file.
-  printf("Extract data from file !\n");
-  //  fileReader(fileName, matrix);//Extract the value from *.txt//As the transfert of double pointer doesn't work, we will use it later
-      
-  fp = fopen(fileName, "r");
-  if (fp == NULL) {
-    printf("No file found!\n");
+  int nbCol = 0;
+  int nbRow = 0;
+ //Create matrix of pointers
+  double **matrix; // = (double**)malloc(dimMax * sizeof(double*);
+  //Allocate a tempory memory
+  matrix = malloc(dimMax *sizeof *matrix);
+  for (i = 0; i < dimMax; i++){
+    matrix[i] = malloc(dimMax * sizeof *matrix[i]); // (double*)malloc(sizeof(double) * dimMax);  
   }
-  else {
-    printf("File open successfully!\n");
-    i=0;
-    j=0;
-    while ((c = getc(fp)) != EOF) {
-      if (c == 9) {//New column
-        printf("i: %d , j: %d\n", i,j);
-        matrix[i][j] = val;
-        printf("%f\n", matrix[i][j]);
-        j++;
-        val=0;
-      }
-      else if (c == 10) {//New row
-        matrix[i][j] = val;
-        printf("i: %d j: %d\n", i,j);
-         printf("%f\n", matrix[i][j]);
-        i++;
-        j=0;
-        val=0;
-      }
-      else {//Convert ASCII to int
-        val=10*val+(c-48);//Convert code ASCII in int
-      }
-      
-    }//while
-    
-  }//else
-
-  fclose(fp);//Close the file
   
+
+  //Extract value from file
+  fileReader(fileName, matrix, &nbRow, &nbCol);
 
   /*******************************************************/
   //Extrac m data point of matrix D and creates P
@@ -334,9 +237,92 @@ int flag=0;
   }
     
   
-
-  
+  //Free memory
+  for (i=0; i<dimMax; i++) {
+     	  free(matrix[i]);
+   }
+  free(matrix);
   
   return 0;
 }
 
+
+
+
+// FILE READER FUNCTION
+void fileReader(char* fileName, double** matrix, int* nbRow, int* nbCol)
+{
+
+  FILE *fp = NULL;
+  int c;
+  int i =0;
+  int j =0;
+  int val =0;
+
+  //Read file
+  fp = fopen(fileName, "r");
+  if (fp == NULL) {
+    printf("No file found!\n");
+  }
+  else {
+    printf("File open successfully!\n");
+    i=0;
+    j=0;
+
+    while ((c = getc(fp)) != EOF) {
+      if (c == 9) {//New column
+        //        printf("i: %d , j: %d\n", i,j);
+        matrix[i][j] = val;
+        //        printf("%f\n", matrix[i][j]);
+        j++;
+        val=0;
+      }
+      else if (c == 10) {//New row
+        matrix[i][j] = val;
+        i++;
+        j=0;
+        val=0;
+      }
+      else {//Convert ASCII to int
+        val=10*val+(c-48);//Convert code ASCII in int
+      }
+      if (j > *nbCol) *nbCol=j+1;
+      if (i > *nbRow) *nbRow=i;
+    }//while   
+  }//else
+ 
+  fclose(fp);//Close the file
+
+ return;
+}
+
+
+int randomNumberGenerator(int a, int b){
+
+  int myRand =a + rand()%((b-a)+1);
+  return myRand;
+}
+
+
+
+double calculateEuclideanDistance(double* vector1, double* vector2, int N){
+  double val = 0.0;
+  int i = 0;
+  for (i = 0; i < N; i++) {
+    val=val+(pow((vector1[i]-vector2[i]),2));
+  }
+  return sqrt(val);
+}
+
+
+int strToInt(char* num){
+
+  int i = 0;
+  int val=0;
+  
+  while (num[i] != '\0') {//Go through all the char
+    val=10*val+(num[i]-48);//Convert code ASCII in int
+    i++;
+   }
+  return val;
+}

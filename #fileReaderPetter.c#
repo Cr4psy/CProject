@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
   //Allocate a tempory memory
   matrix = malloc(dimMax *sizeof *matrix);
   for (i = 0; i < dimMax; i++){
-    matrix[i] = malloc(dimMax * sizeof *matrix[i]); // (double*)malloc(sizeof(double) * dimMax);   
+    matrix[i] = malloc(dimMax * sizeof *matrix[i]); // (double*)malloc(sizeof(double) * dimMax);  
   }
   
   
