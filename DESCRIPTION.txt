@@ -1,0 +1,11 @@
+DESCRIPTION
+
+The aim of this program is to clusterize data by defining the optimal centroids. The algorith is named k-Means cluster. The program take the data from a file and select x (entered by the user) random datapoint, that are the starting point of the centroids.  The data can be of any dimensions as long as they are identical. Afterwards, the program iterates until obtaining an optimal solution for the centroids, which minimize the euclidean distance of the data to the centroids. As the first values are taken randomly, the final results can diverge.
+
+It is used in the scientific community to realise unsupervised learning, which is a branch of artificial intelligence. It allows to clusterize data. In other terms, it divides a data set into several groups which have similar features.
+
+What is missing in the program is a function that allows to analysed new datapoints in order to define their class.
+
+In running the program, we can obtain different results. If the initial number of centroids is high, the program will conclude in the majority of the cases to three optimal centroids. However, if we analyse manually, we find that 2 centroids is the best results. The program converges in only 11 iterations compared with 14 iterations with three initial centroids. This results can be easily explained by looking at a graphic of the data. 
+
+2016-09-27 Anthony Clerc
