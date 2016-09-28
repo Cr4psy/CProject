@@ -68,31 +68,33 @@ int main(int argc, char *argv[])
   //Extrac m data point of matrix D and creates P
   int myRandNum = 0;
   int randGenerated[m];
-  int nbGenerated = 0;
   double mP[m][nbCol];
 
   
   printf("Generate the P matrix.\n");
-
-  //Generate a random value and check that it's not been generated before
-  for (i = 0; i < m; i++) {
-    myRandNum = randomNumberGenerator(0,nbRow-1);   
-    for (j=0; j<nbGenerated; j++) {      
-      if (myRandNum == randGenerated[j]) {
-        myRandNum = randomNumberGenerator(0, nbRow-1);
-        j=0;//Recontrole that the new value is unique
-      }  
-    }
-    randGenerated[j] = myRandNum;//Save which number has been generated
-  
-    //Copy the row from D to P
-    for (j = 0; j<nbCol; j++) {
-      mP[nbGenerated][j]=matrix[myRandNum][j];
-    }  
-    
-    nbGenerated++;//Number of generated numbers
+  if (m>nbRow) {
+    printf(RED "Impossible to have more centroids than the number of data!\nEnter a smaller number.\n" RESET);
+    return 1;
   }
+  else{
+    //Generate a random value and check that it's not been generated before
+    for (i = 0; i < m; i++) {
+      myRandNum = randomNumberGenerator(0,nbRow-1);   
+      for (j=0; j<i; j++) {      
+        if (myRandNum == randGenerated[j]) {
+          myRandNum = randomNumberGenerator(0, nbRow-1);
+          j=0;//Recontrole that the new value is unique
+        }
+      }
+      randGenerated[i] = myRandNum;//Save which number has been generated
 
+      //Copy the row from D to P
+      for (j = 0; j<nbCol; j++) {
+        mP[i][j]=matrix[myRandNum][j];
+      }
+    
+    }
+  }
 
   /*****************************************************************************/
   /*****************************************************************************/
@@ -100,13 +102,10 @@ int main(int argc, char *argv[])
   printf("Research the centroids...\n");
 int flag=0;
   do{
-  
-  
-
   /*****************************************************************************/
   //Compute the euclidean distance and compare with matrix P
 
-   int iD = 0;//index of D matrix
+  int iD = 0;//index of D matrix
   int iP = 0;//index of P matrix
   double vecP[nbCol];
   double vecD[nbCol];
@@ -124,10 +123,10 @@ int flag=0;
       for (j=0; j <nbCol ; j++) {
         vecP[j]=mP[iP][j];
       }
-     
+
       //Compute euclidean distance
       euclVal = calculateEuclideanDistance(&vecP[0], &vecD[0], nbCol);
-
+      
       if ((euclVal < euclValPre) || (euclValPre == 0)){
         matrix[iD][nbCol]=iP;//Add a column and give the closer parameters
         euclValPre=euclVal;
@@ -146,11 +145,12 @@ int flag=0;
   for (i = 0; i<m; i++) {
     for (j=0; j<nbCol; j++) {
       mPprevious[i][j]=mP[i][j];
+      mP[i][j] = 0;
     }
     nbOfSameClass[i]=0; //Initialze array
   }
 
-  //Compute the average value from all same feature with same class in D and add to P
+  //Compute the average value from all same features with same class in D and add to P
   for (i = 0; i<nbRow; i++) {//Go through all D matrix
     index = matrix[i][nbCol];//The index is given by the class of each data
     for (j=0; j<nbCol; j++) {//Go through column
@@ -158,14 +158,13 @@ int flag=0;
     }
     nbOfSameClass[index]+=1;//Give the number of data added for each elements of P
   }
-
+  
   //Compute the mean by dividing by the number of value of the same mPindex
   for (i = 0; i<m; i++) {
-    for (j=0; j<nbCol; j++) {
+    for (j=0; j<nbCol; j++){
       mP[i][j]=mP[i][j]/nbOfSameClass[i];
     }
   }
-
 
 
   /*****************************************************************************/
@@ -179,6 +178,17 @@ int flag=0;
     }
   }
   nbIteration++;
+  /* printf("(----------)\n");
+  for (i = 0; i<m; i++) {
+
+      printf(YEL "P : {");
+      for (j=0; j<nbCol; j++) {
+        printf(" %f ",mP[i][j]);
+      }
+      printf("}\n"RESET);
+    
+  }
+  */
   
   }while (flag==0);//Loop as long as there is an improvment
   /*****************************************************************************/

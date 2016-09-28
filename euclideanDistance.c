@@ -3,6 +3,7 @@
 
 #include <math.h>
 
+
 double calculateEuclideanDistance(double* vector1, double* vector2, int N){
   double val = 0.0;
   int i = 0;
@@ -11,3 +12,5 @@ double calculateEuclideanDistance(double* vector1, double* vector2, int N){
   }
   return sqrt(val);
 }
+
+
