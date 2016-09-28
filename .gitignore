@@ -1,1 +1,4 @@
 *#*
+0LD/**
+# ignore objects and archives
+*.[oa]
